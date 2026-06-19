@@ -8,10 +8,33 @@ import struct
 import time
 import requests
 
+def load_access_token():
+    # 1. Try to read from environment variable
+    token = os.environ.get("UPSTOX_ACCESS_TOKEN")
+    if token:
+        return token
+    
+    # 2. Try to read from local .env file
+    for env_path in [".env", "../.env", "scripts/.env"]:
+        if os.path.exists(env_path):
+            try:
+                with open(env_path, "r") as f:
+                    for line in f:
+                        line = line.strip()
+                        if line.startswith("UPSTOX_ACCESS_TOKEN="):
+                            # Extract value after '=' and strip whitespace/quotes
+                            val = line.split("=", 1)[1].strip()
+                            if (val.startswith('"') and val.endswith('"')) or (val.startswith("'") and val.endswith("'")):
+                                val = val[1:-1]
+                            return val
+            except Exception:
+                pass
+    return None
+
 # ==========================================
 # CONFIGURATION
 # ==========================================
-ACCESS_TOKEN = os.environ.get("UPSTOX_ACCESS_TOKEN", "YOUR_UPSTOX_ACCESS_TOKEN")
+ACCESS_TOKEN = load_access_token()
 INSTRUMENT = "NSE_EQ|INE002A01018"  # NSE: RELIANCE
 
 # UDP target (FPGA Listening Port)
@@ -87,6 +110,13 @@ def main():
     print(f"Monitoring Instrument: {INSTRUMENT}")
     print(f"Targeting FPGA Locate ID: {FPGA_LOCATE_ID} ({FPGA_SYMBOL.decode('ascii').strip()})")
     print("====================================================")
+    
+    if not ACCESS_TOKEN:
+        print("[ERROR] No valid UPSTOX_ACCESS_TOKEN found!")
+        print("Please create a '.env' file in the root folder of this project with:")
+        print("  UPSTOX_ACCESS_TOKEN=your_token_here")
+        print("Or set the UPSTOX_ACCESS_TOKEN environment variable in your shell.")
+        return
     
     # Setup UDP Socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

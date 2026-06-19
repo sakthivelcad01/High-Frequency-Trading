@@ -1,0 +1,8 @@
+# Environment secrets
+.env
+
+# Simulation files
+*.vcd
+*.vvp
+tb/*.vcd
+tb/*.vvp
