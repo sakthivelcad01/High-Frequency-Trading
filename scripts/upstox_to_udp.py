@@ -2,6 +2,7 @@
 # Real-Time Upstox API to UDP NASDAQ ITCH 5.0 Bridge
 # Fetches live Indian market quotes and streams them into the FPGA UDP parser.
 
+import os
 import socket
 import struct
 import time
@@ -10,7 +11,7 @@ import requests
 # ==========================================
 # CONFIGURATION
 # ==========================================
-ACCESS_TOKEN = "eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiI3QkFBS0ciLCJqdGkiOiI2YTMzNzM0MDU5NzgyMDU0NjA4NGQ3YjQiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaXNQbHVzUGxhbiI6ZmFsc2UsImlhdCI6MTc4MTc1NjczNiwiaXNzIjoidWRhcGktZ2F0ZXdheS1zZXJ2aWNlIiwiZXhwIjoxNzgxODIwMDAwfQ.buspZUJahV5SEKs6NbRQ57KUuiwUukw_WbhV2oWv6cQ"
+ACCESS_TOKEN = os.environ.get("UPSTOX_ACCESS_TOKEN", "YOUR_UPSTOX_ACCESS_TOKEN")
 INSTRUMENT = "NSE_EQ|INE002A01018"  # NSE: RELIANCE
 
 # UDP target (FPGA Listening Port)
